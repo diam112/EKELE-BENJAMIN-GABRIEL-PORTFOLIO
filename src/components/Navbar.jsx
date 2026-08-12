@@ -59,7 +59,6 @@ export default function Navbar({
               <button
                 type="button"
                 className={`nav-link ${activePage === item.id ? 'active' : ''}`}
-                style={{ background: 'none', border: 'none', font: 'inherit' }}
                 onClick={() => {
                   if (onNavigate) onNavigate(item.id);
                   setMobileOpen(false);

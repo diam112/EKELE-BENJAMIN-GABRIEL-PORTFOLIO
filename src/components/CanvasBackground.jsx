@@ -18,16 +18,38 @@ export default function CanvasBackground() {
 
     window.addEventListener('resize', handleResize);
 
+    // Track mouse & touch position for touch interaction on smartphones & desktop
+    const pointer = { x: width / 2, y: height / 2, active: false };
+
+    const handlePointerMove = (e) => {
+      const clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
+      if (typeof clientX === 'number' && typeof clientY === 'number') {
+        pointer.x = clientX;
+        pointer.y = clientY;
+        pointer.active = true;
+      }
+    };
+
+    const handlePointerEnd = () => {
+      pointer.active = false;
+    };
+
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('touchstart', handlePointerMove, { passive: true });
+    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    window.addEventListener('touchend', handlePointerEnd);
+
     const particles = [];
-    const particleCount = Math.min(Math.floor(width / 25), 45);
+    const particleCount = Math.min(Math.floor(width / 20), 45);
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 1.8 + 0.8,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1,
       });
     }
 
@@ -44,9 +66,20 @@ export default function CanvasBackground() {
         if (p.x < 0 || p.x > width) p.vx *= -1;
         if (p.y < 0 || p.y > height) p.vy *= -1;
 
+        // Pointer reaction on smartphones & desktop
+        if (pointer.active) {
+          const dx = pointer.x - p.x;
+          const dy = pointer.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130 && dist > 0) {
+            p.x += (dx / dist) * 0.4;
+            p.y += (dy / dist) * 0.4;
+          }
+        }
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
         ctx.fill();
 
         for (let j = i + 1; j < particles.length; j++) {
@@ -59,8 +92,8 @@ export default function CanvasBackground() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 * (1 - dist / 140)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - dist / 140)})`;
+            ctx.lineWidth = 0.7;
             ctx.stroke();
           }
         }
@@ -73,6 +106,10 @@ export default function CanvasBackground() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handlePointerMove);
+      window.removeEventListener('touchstart', handlePointerMove);
+      window.removeEventListener('touchmove', handlePointerMove);
+      window.removeEventListener('touchend', handlePointerEnd);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -81,9 +118,9 @@ export default function CanvasBackground() {
     <>
       <canvas id="bg-canvas" ref={canvasRef} />
       <div className="ambient-glow-orbs">
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-        <div className="orb orb-3"></div>
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
       </div>
     </>
   );

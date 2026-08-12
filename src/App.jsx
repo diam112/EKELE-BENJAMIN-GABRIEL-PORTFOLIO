@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
+import CanvasBackground from './components/CanvasBackground';
 import Hero from './components/Hero';
 import About from './components/About';
 import Projects from './components/Projects';
@@ -116,6 +117,7 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <CanvasBackground />
       {/* High-Tech Cyber Scanline Laser Transition Screen with Per-Page Unique Color */}
       <div
         className={`cyber-transition-screen ${isTransitioning ? 'active' : ''}`}

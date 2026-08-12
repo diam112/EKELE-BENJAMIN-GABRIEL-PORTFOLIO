@@ -224,6 +224,61 @@ body {
   opacity: 0.8;
 }
 
+/* Background Canvas & Ambient Glow Orbs */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-orbs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-glow-orbs .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  transition: all 0.5s ease;
+}
+
+.ambient-glow-orbs .orb-1 {
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: var(--accent-primary, #0066FF);
+}
+
+.ambient-glow-orbs .orb-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 45vw;
+  height: 45vw;
+  background: var(--accent-secondary, #7C3AED);
+}
+
+.ambient-glow-orbs .orb-3 {
+  top: 40%;
+  left: 30%;
+  width: 35vw;
+  height: 35vw;
+  background: var(--accent-cyan, #00F0FF);
+  opacity: 0.2;
+}
+
 /* Header & Glass Navigation */
 .header {
   position: fixed;
@@ -250,6 +305,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .logo-brand {
@@ -306,6 +362,9 @@ body {
   transition: all var(--transition-bounce);
   position: relative;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  font-family: inherit;
 }
 .nav-link:hover, .nav-link.active {
   color: var(--text-main);
@@ -1470,6 +1529,39 @@ body {
 @media (max-width: 768px) {
   .nav-menu {
     display: none;
+  }
+  .nav-menu.mobile-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 12px;
+    background: rgba(14, 17, 24, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+    gap: 4px;
+    z-index: 1000;
+  }
+  [data-theme="light"] .nav-menu.mobile-open {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  }
+  .nav-menu.mobile-open li {
+    width: 100%;
+  }
+  .nav-menu.mobile-open .nav-link {
+    width: 100%;
+    text-align: left;
+    display: block;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
   }
   .mobile-toggle {
     display: block;

@@ -61,7 +61,17 @@ export default function Flex() {
       mouse.y = e.clientY - rect.top;
     };
 
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.touches[0].clientX - rect.left;
+        mouse.y = e.touches[0].clientY - rect.top;
+      }
+    };
+
     canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('touchstart', handleTouchMove, { passive: true });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const particles = [];
     const count = 340;
@@ -195,6 +205,8 @@ export default function Flex() {
     return () => {
       window.removeEventListener('resize', updateDimensions);
       canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('touchstart', handleTouchMove);
+      canvas.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -233,8 +245,26 @@ export default function Flex() {
       mouse.y = -500;
     };
 
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.touches[0].clientX - rect.left;
+        mouse.y = e.touches[0].clientY - rect.top;
+        mouse.active = true;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      mouse.active = false;
+      mouse.x = -500;
+      mouse.y = -500;
+    };
+
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchstart', handleTouchMove, { passive: true });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+    canvas.addEventListener('touchend', handleTouchEnd);
 
     let sludgeGrid = [];
     const rows = 26;
@@ -378,6 +408,9 @@ export default function Flex() {
       window.removeEventListener('resize', updateDimensions);
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
+      canvas.removeEventListener('touchstart', handleTouchMove);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -450,6 +483,33 @@ export default function Flex() {
       isDragging = false;
     };
 
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches[0]) {
+        isDragging = true;
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isDragging || !e.touches || !e.touches[0]) return;
+      const dx = e.touches[0].clientX - lastMouseX;
+      const dy = e.touches[0].clientY - lastMouseY;
+
+      velY = dx * 0.008;
+      velX = -dy * 0.008;
+
+      rotY += velY;
+      rotX += velX;
+
+      lastMouseX = e.touches[0].clientX;
+      lastMouseY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+    };
+
     const handleClick = () => {
       velX = (Math.random() - 0.5) * 0.35;
       velY = (Math.random() - 0.5) * 0.35;
@@ -459,6 +519,10 @@ export default function Flex() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('click', handleClick);
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
 
     let animId;
 
@@ -562,6 +626,9 @@ export default function Flex() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('click', handleClick);
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       cancelAnimationFrame(animId);
     };
   }, []);
