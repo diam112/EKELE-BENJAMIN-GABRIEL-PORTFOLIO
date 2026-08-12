@@ -82,8 +82,8 @@ export function CaseStudyModal({ projectId, onClose }) {
 }
 
 export function EditNameModal({ isOpen, currentName, onSave, onClose }) {
-  if (!isOpen) return null;
   const [inputName, setInputName] = useState(currentName);
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
